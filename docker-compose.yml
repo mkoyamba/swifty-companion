@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  android-container:
+    image: budtmo/docker-android:latest
+    container_name: android-container
+    ports:
+      - "6080:6080"
+      - "5555:5555"
+    environment:
+      EMULATOR_DEVICE: "Samsung Galaxy S10"
+      WEB_VNC: "true"
+    devices:
+      - "/dev/kvm:/dev/kvm"
+    stdin_open: true
+    tty: true
+
+  adb-service:
+    build: ./android-emulator
+    container_name: adb-container
+    depends_on:
+      - android-container
+    network_mode: "service:android-container"
+    command: adb connect 127.0.0.1:5555
+
+  react-native:
+    build: ./app
+    container_name: react-native-container
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+    working_dir: /app
+    depends_on:
+      - adb-service
+    network_mode: "service:android-container"
+    command: bash -c "npm i && npm start"
