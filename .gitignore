@@ -33,6 +33,8 @@ app/*.hprof
 app/.cxx/
 app/*.keystore
 app/!debug.keystore
+app/android/app/build
+app/android/.gradle
 
 # node.js
 #
