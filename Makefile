@@ -6,14 +6,14 @@
 #    By: mkoyamba <mkoyamba@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/06 17:04:20 by mkoyamba          #+#    #+#              #
-#    Updated: 2024/08/18 17:23:39 by mkoyamba         ###   ########.fr        #
+#    Updated: 2024/08/19 01:54:32 by mkoyamba         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 #          ----------========== {    REGLES    } ==========----------
 
 
-all: build up
+all: build
 	@printf "\e[0;31m[Emulator started]\n\e[0;m"
 
 build:

@@ -7,6 +7,7 @@ services:
     ports:
       - "6080:6080"
       - "5555:5555"
+      - "5554:5554"
     environment:
       EMULATOR_DEVICE: "Samsung Galaxy S10"
       WEB_VNC: "true"
@@ -14,14 +15,17 @@ services:
       - "/dev/kvm:/dev/kvm"
     stdin_open: true
     tty: true
+    networks:
+      - default
 
-  adb-service:
-    build: ./android-emulator
-    container_name: adb-container
-    depends_on:
-      - android-container
-    network_mode: "service:android-container"
-    command: adb connect 127.0.0.1:5555
+#  adb-service:
+#    build: ./android-emulator
+#    container_name: adb-container
+#    depends_on:
+#      - android-container
+#    networks:
+#      - default
+#    command: bash -c "sleep 5 && adb connect android-container:5555 && adb wait-for-device && tail -f /dev/null"
 
   react-native:
     build: ./app
@@ -31,6 +35,10 @@ services:
       - /app/node_modules
     working_dir: /app
     depends_on:
-      - adb-service
-    network_mode: "service:android-container"
-    command: bash -c "npm i && npm start"
+      - android-container
+    networks:
+      - default
+    command: bash -c "npm install && adb connect android-container:5555 && adb wait-for-device && npx react-native start"
+networks:
+  default:
+    driver: bridge

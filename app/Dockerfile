@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     unzip \
     android-tools-adb \
-    openjdk-8-jdk \
+    openjdk-21-jdk \
     wget \
     && apt-get clean
 

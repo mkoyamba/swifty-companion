@@ -1,6 +1,6 @@
 {
-  "root": "/home/mkoyamba/19/test/app",
-  "reactNativePath": "/home/mkoyamba/19/test/app/node_modules/react-native",
+  "root": "/app",
+  "reactNativePath": "/app/node_modules/react-native",
   "reactNativeVersion": "0.75",
   "dependencies": {},
   "commands": [
@@ -164,7 +164,7 @@
         {
           "name": "--path <path>",
           "description": "Path to the React Native project root.",
-          "default": "/home/mkoyamba/19/test/app"
+          "default": "/app"
         },
         {
           "name": "--platform <string>",
@@ -215,8 +215,7 @@
         },
         {
           "name": "--terminal <string>",
-          "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "xterm-256color"
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
         },
         {
           "name": "--binary-path <string>",
@@ -371,8 +370,7 @@
         },
         {
           "name": "--terminal <string>",
-          "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "xterm-256color"
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
         },
         {
           "name": "--appId <string>",
@@ -447,7 +445,7 @@
   "assets": [],
   "project": {
     "ios": {
-      "sourceDir": "/home/mkoyamba/19/test/app/ios",
+      "sourceDir": "/app/ios",
       "xcodeProject": {
         "name": "app.xcodeproj",
         "path": ".",
@@ -456,7 +454,7 @@
       "assets": []
     },
     "android": {
-      "sourceDir": "/home/mkoyamba/19/test/app/android",
+      "sourceDir": "/app/android",
       "appName": "app",
       "packageName": "com.app",
       "applicationId": "com.app",
