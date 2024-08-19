@@ -4,6 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
     curl \
+    tmux \
     unzip \
     android-tools-adb \
     openjdk-21-jdk \

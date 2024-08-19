@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   android-container:
     image: budtmo/docker-android:latest
@@ -11,6 +9,7 @@ services:
     environment:
       EMULATOR_DEVICE: "Samsung Galaxy S10"
       WEB_VNC: "true"
+      EXPO_DEVTOOLS_LISTEN_ADDRESS: 0.0.0.0
     devices:
       - "/dev/kvm:/dev/kvm"
     stdin_open: true
@@ -18,18 +17,11 @@ services:
     networks:
       - default
 
-#  adb-service:
-#    build: ./android-emulator
-#    container_name: adb-container
-#    depends_on:
-#      - android-container
-#    networks:
-#      - default
-#    command: bash -c "sleep 5 && adb connect android-container:5555 && adb wait-for-device && tail -f /dev/null"
-
   react-native:
     build: ./app
     container_name: react-native-container
+    ports:
+      - "8081:8081"
     volumes:
       - ./app:/app
       - /app/node_modules
@@ -38,7 +30,10 @@ services:
       - android-container
     networks:
       - default
-    command: bash -c "npm install && adb connect android-container:5555 && adb wait-for-device && npx react-native start"
+    command: bash -c "npm i && adb connect android-container:5555 && adb wait-for-device && sleep 180 && npx expo start --android"
+    environment:
+      EXPO_DEVTOOLS_LISTEN_ADDRESS: 0.0.0.0 
+
 networks:
   default:
     driver: bridge
