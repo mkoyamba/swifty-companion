@@ -6,7 +6,7 @@
 #    By: mkoyamba <mkoyamba@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/06 17:04:20 by mkoyamba          #+#    #+#              #
-#    Updated: 2024/08/19 18:02:10 by mkoyamba         ###   ########.fr        #
+#    Updated: 2024/08/19 18:38:41 by mkoyamba         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ apk:
 	cd app && npx eas build --platform android --profile preview --local --output=../app.apk
 
 fclean: clean
-	docker rmi $(docker images -q budtmo/docker-android:latest) $(docker images -q adb-service) $(docker images -q react-native)
+	docker rmi $(docker images -q budtmo/docker-android:latest) $(docker images -q react-native)
 	@printf "\e[0;31m[All images deleted]\n\e[0;m"
 
 re: fclean all
