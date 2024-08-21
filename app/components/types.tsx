@@ -1,3 +1,4 @@
+import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 
 export type RootStackParamList = {
@@ -10,7 +11,9 @@ export type RootStackParamList = {
 
 export type NavigationPropsHomepage = NativeStackNavigationProp<RootStackParamList, 'Homepage'>;
 
-export type NavigationPropsStatpage = NativeStackScreenProps<RootStackParamList, "StatPage">;
+export type NavigationPropsStatpage = NativeStackScreenProps<RootStackParamList, 'StatPage'>;
+
+export type NavigationPropsStatpageNavigation = NativeStackNavigationProp<RootStackParamList, 'StatPage'>;
 
 export type StatsResults = {
 	kind: string | undefined,
@@ -21,7 +24,14 @@ export type StatsResults = {
 	skills: {
 		[key: string]: [number, number];
 	},
-	imageURL: string | undefined
+	imageURL: string | undefined,
+	cursus_id: number | undefined
+}
+
+export type ProjectsResults = {
+	validated: true | false | null | undefined,
+	project_name: string | undefined,
+	mark: number | null | undefined,
 }
 
 export type skillType = {

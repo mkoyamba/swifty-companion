@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, Image, ScrollView } from 'react-native';
-import { NavigationPropsStatpage, skillType, StatsResults } from '../components/types'; // Ensure this import path is correct
+import { View, Text, StyleSheet, Alert, Image, ScrollView, Button, Pressable } from 'react-native';
+import { NavigationPropsStatpage, NavigationPropsStatpageNavigation, ProjectsResults, skillType, StatsResults } from '../components/types'; // Ensure this import path is correct
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { URL } from '@env'
 
 const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 	const { inputValue, token } = root.route.params;
-	const navigation = useNavigation<NavigationPropsStatpage>();
+	const navigation = useNavigation<NavigationPropsStatpageNavigation>();
 
 	const [stats, setStats] = useState<StatsResults>({
 		kind: undefined,
@@ -16,7 +16,10 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 		name: undefined,
 		skills: {},
 		imageURL: undefined,
+		cursus_id: undefined
 	});
+
+	const [projects, setProjects] = useState<ProjectsResults[]>()
 
 	const getStats = async () => {
 		if (stats.login === inputValue)
@@ -29,7 +32,9 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 			name: undefined,
 			skills: {},
 			imageURL: undefined,
+			cursus_id: undefined
 		};
+		let projectsTemp: ProjectsResults[] = [];
 		console.log("Call API 42 User")
 		const fetched = await fetch(`${URL}v2/users/${inputValue}?access_token=${token}`, {
 			headers: {
@@ -37,25 +42,29 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 			},
 			method: 'GET'
 		}).catch((err) => {
-			console.log(err)
-			throw JSON.stringify(err);
+			Alert.alert(JSON.stringify(err));
+			navigation.goBack();
+			throw JSON.stringify(err)
 		})
 		const fetchedJSON = await fetched.json()
-		if (!fetched.ok)
-			throw JSON.stringify(await fetchedJSON)
-		const id: string = fetchedJSON?.id
-		if (!id) {
-			Alert.alert('Not found');
-			console.log('ouch')
-			navigation.navigation.goBack();
-			return
+		if (fetched.status !== 200) {
+			if (fetched.status === 404)
+				(Alert.alert('Not found'))
+			else
+				Alert.alert(JSON.stringify(fetched.status));
+			navigation.goBack();
+			throw JSON.stringify(fetched.status)
 		}
 		statsTemp.kind = fetchedJSON?.kind;
+		if (fetchedJSON["staff?"])
+			statsTemp.kind = 'staff';
 		statsTemp.login = fetchedJSON?.login;
 		statsTemp.email = fetchedJSON?.email;
 		fetchedJSON?.cursus_users.forEach((cursus: any) => {
-			if (cursus?.cursus.name === '42cursus')
+			if (cursus?.cursus.name === '42cursus') {
+				statsTemp.cursus_id = cursus.cursus.id;
 				statsTemp.level = cursus.level;
+			}
 			cursus.skills.forEach((skill: skillType) => {
 				const name = skill.name;
 				const value = skill.level;
@@ -63,12 +72,22 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 				statsTemp.skills[name] = [value, percent]
 			})
 		})
+		fetchedJSON?.projects_users.forEach((project: any) => {
+			if (project?.cursus_ids[0] === statsTemp.cursus_id
+				&& (project["validated?"] === true || project["validated?"] === false)) {
+				let projTemp: ProjectsResults = {
+					validated: project["validated?"],
+					project_name: project.project.name,
+					mark: project.final_mark
+				}
+				projectsTemp.push(projTemp);
+			}
+		})
 		statsTemp.name = fetchedJSON?.usual_full_name;
 		statsTemp.imageURL = fetchedJSON?.image.link;
 		setStats(statsTemp);
+		setProjects(projectsTemp);
 	}
-	
-
 
 	useFocusEffect(() => {getStats().catch(err => {
 		console.log(err)
@@ -77,6 +96,11 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 	
 	return (
 		<View style={styles.container}>
+			<Pressable onPress={() => navigation.goBack()}>
+				<View style={styles.goBackButton}>
+					<Text style={styles.goBackButtonText}>{'<'}</Text>
+				</View>
+			</Pressable>
 			<View style={styles.header}>
 				<Text style={styles.kind}>{stats.kind}</Text>
 				<Text style={styles.login}>{stats.login}</Text>
@@ -89,10 +113,10 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 				<Text style={styles.name}>{stats.name}</Text>
 				<Text style={styles.stat}>Level: {stats.level}</Text>
 				<Text style={styles.stat}>Email: {stats.email}</Text>
-				<Text style={styles.skillHeader}>Skills:</Text>
 			</View>
-			<ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
-				{Object.entries(stats.skills).map(([skillName, [level, percent]]) => (
+			<View style={styles.title}><Text style={styles.skillHeader}>Skills:</Text></View>
+			<ScrollView style={styles.skillsScrollContainer} contentContainerStyle={styles.skillsScrollContent}>
+			{Object.entries(stats.skills).map(([skillName, [level, percent]]) => (
 					<View key={skillName} style={styles.skillContainer}>
 						<Text style={styles.skillName}>{skillName}</Text>
 						<View style={styles.skillDetailsContainer}>
@@ -102,8 +126,20 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 					</View>
 				))}
 			</ScrollView>
-			<View style={styles.projectsContainer}>
-			</View>
+			<View style={styles.title}><Text style={styles.projectsHeader}>Projects:</Text></View>
+			<ScrollView style={styles.projectsScrollContainer} contentContainerStyle={styles.projectsScrollContent}>
+			{projects?.map((project, index) => (
+					<View key={index} style={styles.skillContainer}>
+						<Text style={styles.projectName}>{project.project_name}</Text>
+						<View style={styles.projectDetailsContainer}>
+							<Text style={[
+								styles.projectMark, {color: project.validated ? 'green' : 'red'}]}
+								>{project.mark}
+							</Text>
+						</View>
+					</View>
+				))}
+			</ScrollView>
 		</View>
 	);
   };
@@ -113,16 +149,46 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: '#faf2d7'
 	},
+	goBackButton: {
+		color: 'light-grey',
+		width: '10%',
+		aspectRatio: 1,
+		borderRadius: 150,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'light-grey',
+		margin: '2%',
+		position: 'absolute',
+	},
+	goBackButtonText: {
+		fontSize: 25,
+		lineHeight: 27,
+		fontWeight: 'bold',
+		color: 'white'
+	},
 	header: {
 		height: '40%',
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
-	scrollContainer: {
+	title: {
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	skillsScrollContainer: {
 		flex: 1,
 		width: '100%'
 	},
-	scrollContent: {
+	skillsScrollContent: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		paddingBottom: 20
+	},
+	projectsScrollContainer: {
+		flex: 1,
+		width: '100%'
+	},
+	projectsScrollContent: {
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingBottom: 20
@@ -159,6 +225,12 @@ const styles = StyleSheet.create({
 		color: 'black',
 		marginTop: 10
 	},
+	projectsHeader: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		color: 'black',
+		marginTop: 10
+	},
 	skillContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
@@ -168,7 +240,7 @@ const styles = StyleSheet.create({
 	},
 	skillName: {
 		fontSize: 16,
-		fontWeight: 'bold',
+		fontWeight: 'medium',
 		color: 'black',
 		flex: 1
 	},
@@ -190,6 +262,21 @@ const styles = StyleSheet.create({
 	projectsContainer: {
 		flex: 1,
 		marginTop: 10
+	},
+	projectName: {
+		fontSize: 16,
+		fontWeight: 'medium',
+		color: 'black',
+		flex: 1
+	},
+	projectDetailsContainer: {
+		flexDirection: 'row',
+		justifyContent: 'flex-end'
+	},
+	projectMark: {
+		fontSize: 14,
+		marginLeft: 10,
+		fontWeight: 'bold'
 	},
 });
 
