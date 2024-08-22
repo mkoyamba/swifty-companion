@@ -64,13 +64,14 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 			if (cursus?.cursus.name === '42cursus') {
 				statsTemp.cursus_id = cursus.cursus.id;
 				statsTemp.level = cursus.level;
+			
+				cursus.skills.forEach((skill: skillType) => {
+					const name = skill.name;
+					const value = skill.level;
+					const percent = value / 20 * 100;
+					statsTemp.skills[name] = [value, percent]
+				})
 			}
-			cursus.skills.forEach((skill: skillType) => {
-				const name = skill.name;
-				const value = skill.level;
-				const percent = value / 20 * 100;
-				statsTemp.skills[name] = [value, percent]
-			})
 		})
 		fetchedJSON?.projects_users.forEach((project: any) => {
 			if (project?.cursus_ids[0] === statsTemp.cursus_id
@@ -116,7 +117,7 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 			</View>
 			<View style={styles.title}><Text style={styles.skillHeader}>Skills:</Text></View>
 			<ScrollView style={styles.skillsScrollContainer} contentContainerStyle={styles.skillsScrollContent}>
-			{Object.entries(stats.skills).map(([skillName, [level, percent]]) => (
+				{Object.entries(stats.skills).map(([skillName, [level, percent]]) => (
 					<View key={skillName} style={styles.skillContainer}>
 						<Text style={styles.skillName}>{skillName}</Text>
 						<View style={styles.skillDetailsContainer}>
@@ -128,7 +129,7 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 			</ScrollView>
 			<View style={styles.title}><Text style={styles.projectsHeader}>Projects:</Text></View>
 			<ScrollView style={styles.projectsScrollContainer} contentContainerStyle={styles.projectsScrollContent}>
-			{projects?.map((project, index) => (
+				{projects?.map((project, index) => (
 					<View key={index} style={styles.skillContainer}>
 						<Text style={styles.projectName}>{project.project_name}</Text>
 						<View style={styles.projectDetailsContainer}>
@@ -142,7 +143,7 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 			</ScrollView>
 		</View>
 	);
-  };
+};
 
 const styles = StyleSheet.create({
 	container: {
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
 		borderRadius: 150,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'light-grey',
+		backgroundColor: 'grey',
 		margin: '2%',
 		position: 'absolute',
 	},

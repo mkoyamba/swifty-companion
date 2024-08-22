@@ -6,7 +6,7 @@
 #    By: mkoyamba <mkoyamba@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/06 17:04:20 by mkoyamba          #+#    #+#              #
-#    Updated: 2024/08/19 18:38:41 by mkoyamba         ###   ########.fr        #
+#    Updated: 2024/08/22 11:02:48 by mkoyamba         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ clean:
 	@printf "\e[0;31m[Services ended]\n\e[0;m"
 
 apk:
-	cd app && npx eas build --platform android --profile preview --local --output=../app.apk
+	cd app && npm i && npx expo install --check && npx eas build --platform android --profile preview --local --output=../app.apk
 
 fclean: clean
 	docker rmi $(docker images -q budtmo/docker-android:latest) $(docker images -q react-native)
