@@ -10,6 +10,11 @@
     "preview": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_URL": "",
+        "EXPO_PUBLIC_UUID": "",
+        "EXPO_PUBLIC_SECRET": ""
       }
     },
     "production": {}

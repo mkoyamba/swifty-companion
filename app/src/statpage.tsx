@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert, Image, ScrollView, Button, Pressable } from 'react-native';
 import { NavigationPropsStatpage, NavigationPropsStatpageNavigation, ProjectsResults, skillType, StatsResults } from '../components/types'; // Ensure this import path is correct
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { URL } from '@env'
 
 const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 	const { inputValue, token } = root.route.params;
 	const navigation = useNavigation<NavigationPropsStatpageNavigation>();
+	const URL = process.env.EXPO_PUBLIC_URL
 
 	const [stats, setStats] = useState<StatsResults>({
 		kind: undefined,
@@ -105,12 +105,15 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 			<View style={styles.header}>
 				<Text style={styles.kind}>{stats.kind}</Text>
 				<Text style={styles.login}>{stats.login}</Text>
-				<Image
+				{stats.imageURL ?
+					<Image
 					style={styles.picture}
 					source={{
 						uri: stats.imageURL,
 					}}
-				/>
+					/>
+					:null
+				}
 				<Text style={styles.name}>{stats.name}</Text>
 				<Text style={styles.stat}>Level: {stats.level}</Text>
 				<Text style={styles.stat}>Email: {stats.email}</Text>
@@ -134,7 +137,7 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 						<Text style={styles.projectName}>{project.project_name}</Text>
 						<View style={styles.projectDetailsContainer}>
 							<Text style={[
-								styles.projectMark, {color: project.validated ? 'green' : 'red'}]}
+								styles.projectMark, {color: project.validated ? '#51e051' : '#fa0202'}]}
 								>{project.mark}
 							</Text>
 						</View>
@@ -151,13 +154,13 @@ const styles = StyleSheet.create({
 		backgroundColor: '#faf2d7'
 	},
 	goBackButton: {
-		color: 'light-grey',
+		color: '#cfcccc',
 		width: '10%',
 		aspectRatio: 1,
 		borderRadius: 150,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'grey',
+		backgroundColor: '#cfcccc',
 		margin: '2%',
 		position: 'absolute',
 	},
@@ -165,7 +168,7 @@ const styles = StyleSheet.create({
 		fontSize: 25,
 		lineHeight: 27,
 		fontWeight: 'bold',
-		color: 'white'
+		color: '#ffffff'
 	},
 	header: {
 		height: '40%',
@@ -195,22 +198,22 @@ const styles = StyleSheet.create({
 		paddingBottom: 20
 	},
 	kind: {
-		color: 'black',
+		color: '#000000',
 		fontWeight: 'bold',
 		fontSize: 15
 	},
 	login: {
-		color: 'black',
+		color: '#000000',
 		fontWeight: 'medium',
 		fontSize: 25
 	},
 	name: {
-		color: 'black',
+		color: '#000000',
 		fontWeight: 'medium',
 		fontSize: 15
 	},
 	stat: {
-		color: 'black',
+		color: '#000000',
 		fontWeight: 'bold',
 		fontSize: 15
 	},
@@ -223,13 +226,13 @@ const styles = StyleSheet.create({
 	skillHeader: {
 		fontSize: 18,
 		fontWeight: 'bold',
-		color: 'black',
+		color: '#000000',
 		marginTop: 10
 	},
 	projectsHeader: {
 		fontSize: 18,
 		fontWeight: 'bold',
-		color: 'black',
+		color: '#000000',
 		marginTop: 10
 	},
 	skillContainer: {
@@ -242,7 +245,7 @@ const styles = StyleSheet.create({
 	skillName: {
 		fontSize: 16,
 		fontWeight: 'medium',
-		color: 'black',
+		color: '#000000',
 		flex: 1
 	},
 	skillDetailsContainer: {
@@ -251,12 +254,12 @@ const styles = StyleSheet.create({
 	},
 	skillLevel: {
 		fontSize: 14,
-		color: 'black',
+		color: '#000000',
 		marginLeft: 10,
 	},
 	skillPercent: {
 		fontSize: 14,
-		color: 'black',
+		color: '#000000',
 		fontWeight: 'bold',
 		marginLeft: 10
 	},
@@ -267,7 +270,7 @@ const styles = StyleSheet.create({
 	projectName: {
 		fontSize: 16,
 		fontWeight: 'medium',
-		color: 'black',
+		color: '#000000',
 		flex: 1
 	},
 	projectDetailsContainer: {

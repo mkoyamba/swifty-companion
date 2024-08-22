@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "app",
+    "name": "Swifty Companion",
     "slug": "app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -28,6 +28,7 @@
       "eas": {
         "projectId": "85608b3e-ac0f-446a-9f3d-a0a67b79d8cd"
       }
-    }
+    },
+    "plugins":[ [ "expo-build-properties", { "android": { "usesCleartextTraffic": true } } ] ]
   }
 }

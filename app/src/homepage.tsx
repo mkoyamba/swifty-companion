@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
 import { NavigationPropsHomepage, TokenFetchType } from '../components/types'; // Ensure this import path is correct
 import { useNavigation } from '@react-navigation/native';
-import { UUID, SECRET, URL } from '@env'
 
 const Homepage: React.FC = () => {
 
 	const [token, setToken] = useState('');
 	const [inputValue, setInputValue] = useState('');
 	const navigation = useNavigation<NavigationPropsHomepage>();
+	const URL = process.env.EXPO_PUBLIC_URL;
+	const UUID = process.env.EXPO_PUBLIC_UUID;
+	const SECRET = process.env.EXPO_PUBLIC_SECRET;
+
+	console.log(process.env)
 
 	const handleToken = async (): Promise<string> => {
 		console.log("Call API 42 token")
@@ -22,24 +26,26 @@ const Homepage: React.FC = () => {
 				client_id: UUID,
 				client_secret: SECRET
 			})
-		}).catch((err) => {
-			throw JSON.stringify(err);
-		})
-		const fetchedJSON = await fetched.json()
-		if (!fetched.ok)
-			throw JSON.stringify(await fetchedJSON)
+		}).then(async response => {
+			if (response.ok)
+				return await response.json();
+			return await response.json().then(response => {throw new Error(response.error)})
+		}).catch(error => {throw new Error(error.message);})
+		const fetchedJSON = await fetched;
 		const tokenValue: string = fetchedJSON?.access_token
 		if (tokenValue) {
 			return tokenValue
 		}
 		else
-			throw await fetched.text()
+			throw new Error(fetchedJSON?.error)
 	}
 
 	const tokenConnect = async (): Promise<number> => {
 		if (token === '') {
-			let tokenTry = await handleToken().catch((err) => {
-				Alert.alert("Problème de connexion avec l'API 42")
+			let tokenTry = await handleToken().catch((err: Error) => {
+				console.log(err)
+				Alert.alert("Problème de connexion avec l'API 42: " + err.message)
+				console.log("HERE_IS\n\n" + JSON.stringify(process.env))
 			})
 			if (tokenTry)
 				setToken(tokenTry)
@@ -101,10 +107,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		borderRadius: 40,
 		elevation: 3,
-		backgroundColor: 'black',
+		backgroundColor: '#000000',
 	},
 	buttonText: {
-		color: 'white',
+		color: '#ffffff',
 		lineHeight: 21,
 		fontWeight: 'bold',
 		fontSize: 20,
