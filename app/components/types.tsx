@@ -4,8 +4,8 @@ import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-naviga
 export type RootStackParamList = {
 	Homepage: undefined,
 	StatPage: {
-	  inputValue: string;
-	  token: string;
+	  stats: StatsResults;
+	  projects:	ProjectsResults[] | undefined
 	}
 };
 
@@ -43,4 +43,9 @@ export type skillType = {
 export type TokenFetchType = {
 	"access_token": string,
 	[key: string]: any;
+}
+
+export type SearchUserType = {
+	login: string,
+	image_url: string,
 }

@@ -4,96 +4,8 @@ import { NavigationPropsStatpage, NavigationPropsStatpageNavigation, ProjectsRes
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
-	const { inputValue, token } = root.route.params;
+	const { stats, projects } = root.route.params;
 	const navigation = useNavigation<NavigationPropsStatpageNavigation>();
-	const URL = process.env.EXPO_PUBLIC_URL
-
-	const [stats, setStats] = useState<StatsResults>({
-		kind: undefined,
-		login: undefined,
-		email: undefined,
-		level: undefined,
-		name: undefined,
-		skills: {},
-		imageURL: undefined,
-		cursus_id: undefined
-	});
-
-	const [projects, setProjects] = useState<ProjectsResults[]>()
-
-	const getStats = async () => {
-		if (stats.login === inputValue)
-			return
-		let statsTemp: StatsResults = {
-			kind: undefined,
-			login: undefined,
-			email: undefined,
-			level: undefined,
-			name: undefined,
-			skills: {},
-			imageURL: undefined,
-			cursus_id: undefined
-		};
-		let projectsTemp: ProjectsResults[] = [];
-		console.log("Call API 42 User")
-		const fetched = await fetch(`${URL}v2/users/${inputValue}?access_token=${token}`, {
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			method: 'GET'
-		}).catch((err) => {
-			Alert.alert(JSON.stringify(err));
-			navigation.goBack();
-			throw JSON.stringify(err)
-		})
-		const fetchedJSON = await fetched.json()
-		if (fetched.status !== 200) {
-			if (fetched.status === 404)
-				(Alert.alert('Not found'))
-			else
-				Alert.alert(JSON.stringify(fetched.status));
-			navigation.goBack();
-			throw JSON.stringify(fetched.status)
-		}
-		statsTemp.kind = fetchedJSON?.kind;
-		if (fetchedJSON["staff?"])
-			statsTemp.kind = 'staff';
-		statsTemp.login = fetchedJSON?.login;
-		statsTemp.email = fetchedJSON?.email;
-		fetchedJSON?.cursus_users.forEach((cursus: any) => {
-			if (cursus?.cursus.name === '42cursus') {
-				statsTemp.cursus_id = cursus.cursus.id;
-				statsTemp.level = cursus.level;
-			
-				cursus.skills.forEach((skill: skillType) => {
-					const name = skill.name;
-					const value = skill.level;
-					const percent = value / 20 * 100;
-					statsTemp.skills[name] = [value, percent]
-				})
-			}
-		})
-		fetchedJSON?.projects_users.forEach((project: any) => {
-			if (project?.cursus_ids[0] === statsTemp.cursus_id
-				&& (project["validated?"] === true || project["validated?"] === false)) {
-				let projTemp: ProjectsResults = {
-					validated: project["validated?"],
-					project_name: project.project.name,
-					mark: project.final_mark
-				}
-				projectsTemp.push(projTemp);
-			}
-		})
-		statsTemp.name = fetchedJSON?.usual_full_name;
-		statsTemp.imageURL = fetchedJSON?.image.link;
-		setStats(statsTemp);
-		setProjects(projectsTemp);
-	}
-
-	useFocusEffect(() => {getStats().catch(err => {
-		console.log(err)
-		});
-	})
 	
 	return (
 		<View style={styles.container}>
@@ -107,10 +19,10 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 				<Text style={styles.login}>{stats.login}</Text>
 				{stats.imageURL ?
 					<Image
-					style={styles.picture}
-					source={{
-						uri: stats.imageURL,
-					}}
+						style={styles.picture}
+						source={{
+							uri: stats.imageURL,
+						}}
 					/>
 					:null
 				}
