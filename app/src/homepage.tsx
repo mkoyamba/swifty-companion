@@ -55,10 +55,12 @@ const Homepage: React.FC = () => {
 			let tokenTry = await handleToken().catch((err: Error) => {
 				console.log(err)
 				Alert.alert("Problème de connexion avec l'API 42: " + err.message)
-				console.log("HERE_IS\n\n" + JSON.stringify(process.env))
 			})
-			if (tokenTry)
+			if (tokenTry) {
 				setToken(tokenTry)
+			}
+			else
+				return 1
 		}
 		return 0
 	}
@@ -94,7 +96,8 @@ const Homepage: React.FC = () => {
 			if (fetched.status === 404)
 				(Alert.alert('Not found'))
 			else if ((await fetched.json())?.error === "The access token is invalid") {
-				await tokenConnect(true)
+				if (await tokenConnect(true) === 1)
+					throw JSON.stringify(fetched.status)
 				return await getStats(params)
 			}
 			else
@@ -142,6 +145,8 @@ const Homepage: React.FC = () => {
 	}
 
 	const handleSubmit = async (value: string) => {
+		if (value === "")
+			return ;
 		let res: {
 			st: StatsResults;
 			pr: ProjectsResults[];
@@ -161,7 +166,8 @@ const Homepage: React.FC = () => {
 	};
 
 	const buttonSub = () => {
-		handleSubmit(inputValue)
+		if (inputValue != "")
+			handleSubmit(inputValue)
 	}
 
 	const onBankSelected = async (value: string) => {
