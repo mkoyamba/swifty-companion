@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, Image, ScrollView, Button, Pressable } from 'react-native';
-import { NavigationPropsStatpage, NavigationPropsStatpageNavigation, ProjectsResults, skillType, StatsResults } from '../components/types'; // Ensure this import path is correct
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { View, Text, StyleSheet, Image, ScrollView, Pressable, StatusBar } from 'react-native';
+import { NavigationPropsStatpage, NavigationPropsStatpageNavigation } from '../components/types';
+import { useNavigation } from '@react-navigation/native';
 
 const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 	const { stats, projects } = root.route.params;
@@ -9,6 +9,7 @@ const StatPage : React.FC<NavigationPropsStatpage> = ( root ) => {
 	
 	return (
 		<View style={styles.container}>
+			<StatusBar translucent={true} backgroundColor={'transparent'} />
 			<Pressable onPress={() => navigation.goBack()}>
 				<View style={styles.goBackButton}>
 					<Text style={styles.goBackButtonText}>{'<'}</Text>

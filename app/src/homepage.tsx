@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert, FlatList, TouchableOpacity, Image } from 'react-native';
-import { NavigationPropsHomepage, ProjectsResults, SearchUserType, skillType, StatsResults } from '../components/types'; // Ensure this import path is correct
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, FlatList, TouchableOpacity, Image, StatusBar } from 'react-native';
+import { NavigationPropsHomepage, ProjectsResults, SearchUserType, skillType, StatsResults } from '../components/types';
 import { useNavigation } from '@react-navigation/native';
 
 const Homepage: React.FC = () => {
@@ -200,6 +200,7 @@ const Homepage: React.FC = () => {
 
 	return (
 		<View style={styles.page}>
+			<StatusBar translucent={true} backgroundColor={'transparent'} />
 			<View style={styles.containerLogo}>
 				<Image
 					style={styles.logo_school}
@@ -211,7 +212,7 @@ const Homepage: React.FC = () => {
 			<View style={styles.header}>
 				<TextInput
 					style={styles.input}
-					placeholder="   Entrez un login"
+					placeholder="Entrez un login"
 					value={inputValue}
 					onChangeText={handleSearch}
 					onSubmitEditing={buttonSub} // Lance la fonction quand l'utilisateur appuie sur le bouton de validation du clavier
@@ -296,6 +297,7 @@ const styles = StyleSheet.create({
 		borderColor: '#ccc',
 		borderRadius: 40,
 		marginRight: 16,
+		paddingLeft: '5%'
 	},
 	button: {
 		width: 50,
